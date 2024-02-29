@@ -1,0 +1,151 @@
+openapi: 3.0.0
+info:
+  title: Todo List
+  description:
+    Todo List API written with Express, MySQL database
+  version: 1.0.0
+  server:
+    -url: http://localhost:3000/
+    description: local server
+    
+tags:
+  - name: Tasks
+    description: General APIs
+  - name: Task
+    description: Specific task API
+
+paths:
+  /:
+    get:
+      tags: 
+        - Tasks
+      summary: Lists all the tasks, or an empty array if no tasks were found
+      responses:
+        200:
+          description: The list of the tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        500:
+          description: Server error   
+    post:
+      tags: 
+        - Tasks
+      summary: Create a new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        200:
+          description: The created task.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        500:
+          description: Server error
+  /{id}:
+    get:
+      tags: 
+        - Task
+      summary: Get the task by id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The task id
+      responses:
+        200:
+          description: The task response by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        404:
+          description: Task not found
+        500:
+         description: Server error
+    patch:
+      tags: 
+        - Task
+      summary: Update the task by id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The task id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        200:
+          description: Task updated successfully
+        404:
+          description: Task not found
+        500:
+          description: Server error
+    delete:
+      tags: 
+        - Task
+      summary: Remove the task by id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The task id
+      responses:
+        200:
+          description: Task deleted successfully
+        404:
+          description: The task was not found
+        500:
+          description: Server error
+
+components:
+  schemas:
+    Task:
+      type: object
+      required:
+        - title
+        - description
+      properties:
+        id:
+          type: integer
+          description: The auto-generated id of the task
+          example: 10
+        title:
+          type: string
+          description: The title of your task
+          example: Wake up
+        description:
+          type: string
+          description: Describes in more detail about your task
+          example: Getting lunch in the cafeteria
+        dueDate:
+          type: date
+          format: date-time
+          description: The deadline for the task
+        isFinished:
+          type: boolean
+          description: Whether you have finished the task
+      example:
+        id: 23
+        title: Workout at the gym
+        description: Jumping jacks, burpees, pushups, jump squats, high knees 
+        dueDate: 2024-02-28T03:00:00.000Z
+        isFinished: false
